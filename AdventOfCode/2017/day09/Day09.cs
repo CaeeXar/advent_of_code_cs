@@ -20,12 +20,61 @@
 
         public int Part1()
         {
-            return 0;
+            return Play(ReadFile());
         }
 
         public int Part2()
         {
-            return 0;
+            return Play(ReadFile(), true);
+        }
+
+        private int Play(string line, bool returnSkipped = false)
+        {
+            int groups = 0, weigth = 0, skipped = 0;
+            bool isGarbage = false,
+                 ignore = false;
+
+            for(int pos = 0; pos < line.Length; pos++)
+            {
+                char character = line[pos];
+                
+                if (ignore)
+                {
+                    ignore = false;
+                    continue;
+                }
+
+                if(isGarbage && character != '>' && character != '!')
+                {
+                    skipped++;
+                    continue;
+                }
+
+                switch(character)
+                {
+
+                    case '{':
+                        weigth++;
+                        break;
+                    case '}':
+                        groups += weigth;
+                        weigth--;
+                        break;
+                    case '<':
+                        isGarbage = true;
+                        break;
+                    case '>':
+                        isGarbage = false;
+                        break;
+                    case '!':
+                        ignore = true;
+                        break;
+                }
+            }
+
+            if (returnSkipped) return skipped;
+
+            return groups;
         }
     }
 }
