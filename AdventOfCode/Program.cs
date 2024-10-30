@@ -51,13 +51,13 @@ namespace AOC
             //System.Console.WriteLine($"Day08:\n\t- Part 1: {day08.Part1()}\n");
             //System.Console.WriteLine($"\t- Part 2: {day08.Part2()}");
 
-            Day09 day09 = new Day09();
-            System.Console.WriteLine($"Day09:\n\t- Part 1: {day09.Part1()}\n");
-            System.Console.WriteLine($"\t- Part 2: {day09.Part2()}");
+            //Day09 day09 = new Day09();
+            //System.Console.WriteLine($"Day09:\n\t- Part 1: {day09.Part1()}\n");
+            //System.Console.WriteLine($"\t- Part 2: {day09.Part2()}");
 
-            //Day10 day10 = new Day10();
-            //System.Console.WriteLine($"Day10:\n\t- Part 1: {day10.Part1()}\n");
-            //System.Console.WriteLine($"\t- Part 2: {day10.Part2()}");
+            Day10 day10 = new Day10();
+            System.Console.WriteLine($"Day10:\n\t- Part 1: {day10.Part1()}\n");
+            System.Console.WriteLine($"\t- Part 2: {day10.Part2()}");
         }
     }
 }
