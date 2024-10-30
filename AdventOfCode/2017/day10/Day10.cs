@@ -1,4 +1,6 @@
-﻿namespace AOC2017.Day10
+﻿using System.Collections.Generic;
+
+namespace AOC2017.Day10
 {
     internal class Day10
     {
@@ -20,8 +22,7 @@
 
         public int Part1()
         {
-            int[] list = null;
-            GenerateArray(ref list, 256);
+            int[] list = Enumerable.Range(0, 256).ToArray();
             int[] lengths = ReadFile()
                             .Split(",")
                             .Select(d => int.Parse(d.Trim()))
@@ -30,9 +31,26 @@
             return list[0] * list[1];
         }
 
-        public int Part2()
+        public string Part2()
         {
-            return 0;
+            string input = ReadFile();
+            int[] lengths = ParseLengthSequence(input), 
+                  list = Enumerable.Range(0, 256).ToArray();
+
+            KnotHash64(lengths, ref list);
+            int[,] sparse = GetSparseHash(list);
+            int[] dense = GetDenseHash(sparse);
+            string s = string.Join("", 
+                                   dense.Select(i =>
+                                   {
+                                       string s = "";
+                                       if (i < 16) s += "0";
+                                       s += i.ToString("x");
+                                       return s;
+                                   })
+            );
+
+            return s;
         }
 
         private void KnotHash(int[] lengths, int[] list)
@@ -51,6 +69,55 @@
             }
         }
 
+        private void KnotHash64(int[] lengths, ref int[] list) 
+        {
+            int pos = 0, sz = 0;
+            for(int round = 0; round < 64; round++)
+            {
+                foreach (int length in lengths)
+                {
+                    int[] sub = CopySubset(list, pos, length);
+                    for (int i = 0; i < length; i++)
+                    {
+                        list[(pos + i) % list.Length] = sub[i];
+                    }
+
+                    pos = (pos + length + sz) % list.Length;
+                    sz++;
+                }
+            }
+        }
+
+        private int[,] GetSparseHash(int[] input)
+        {
+            int[,] arr = new int[16, 16];
+            for(int i = 0; i < 256; i++)
+            {
+                arr[i / 16, i % 16] = input[i];
+            }
+
+            return arr;
+        }
+
+        private int[] GetDenseHash(int[,] sparse)
+        {
+            int[] dense = new int[16];
+            int i = 0;
+            for(int row = 0; row < 16; row++)
+            {
+                int sum = 0;
+                
+                for (int col = 0; col < 16; col++)
+                {
+                    sum ^= sparse[row, col];
+                }
+
+                dense[i++] = sum;
+            }
+
+            return dense;
+        }
+
         private int[] CopySubset(int[] list, int pos, int length)
         {
             int[] sub = new int[length];
@@ -64,13 +131,11 @@
             return sub;
         }
 
-        private void GenerateArray(ref int[] emptyList, int length = 5)
+        private int[] ParseLengthSequence(string input)
         {
-            emptyList = new int[length];
-            for(int i = 0; i < length; i++)
-            {
-                emptyList[i] = i;
-            }
+            return input
+                   .Select(c => (int)c).ToArray()
+                   .Concat(new int[] { 17, 31, 73, 47, 23 }).ToArray();
         }
     }
 }
