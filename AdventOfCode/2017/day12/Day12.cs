@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace AOC2017.Day12
+﻿namespace AOC2017.Day12
 {
     internal class Day12
     {
