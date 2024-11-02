@@ -1,4 +1,6 @@
-﻿namespace AOC2017.Day12
+﻿using System.Collections.Generic;
+
+namespace AOC2017.Day12
 {
     internal class Day12
     {
@@ -25,7 +27,9 @@
 
         public int Part2()
         {
-            return 0;
+            Dictionary<int, Program> programs = CreatePrograms(ReadFile());
+            HashSet<List<int>> groups = FindGroups(programs);          
+            return groups.Count;
         }
 
         private Dictionary<int, Program> CreatePrograms(string input)
@@ -60,7 +64,7 @@
                     visited.Add(queue[0]);
                  
                     // check if contains ID
-                    if (pID == sID || programs[queue[0]].Neighbours.Contains(sID))
+                    if (queue[0] == sID || programs[queue[0]].Neighbours.Contains(sID))
                     {
                         group++;
                         break;
@@ -77,6 +81,41 @@
             }
 
             return group;
+        }
+
+        private HashSet<List<int>> FindGroups(Dictionary<int, Program> programs)
+        {
+            HashSet<List<int>> groups = new HashSet<List<int>>(new ListComparer());
+            foreach (int pID in programs.Keys)
+            {
+                List<int> visited = new List<int>();
+                List<int> queue = new List<int>() { pID };
+                List<int> group = new List<int>() { pID };
+
+                while (queue.Count > 0)
+                {
+                    visited.Add(queue[0]);
+
+                    foreach (int nID in programs[queue[0]].Neighbours)
+                    {
+                        if (!visited.Contains(nID))
+                        { 
+                            queue.Add(nID);
+                        }
+
+                        if(!group.Contains(nID))
+                        {
+                            group.Add(nID);
+                        }
+                    }
+
+                    queue.RemoveAt(0);
+                }
+
+                groups.Add(group.OrderBy(d => d).ToList());
+            }
+
+            return groups;
         }
     }
 

@@ -69,6 +69,10 @@ namespace AOC
             Day12 day12 = new Day12();
             System.Console.WriteLine($"Day12:\n\t- Part 1: {day12.Part1()}\n");
             System.Console.WriteLine($"\t- Part 2: {day12.Part2()}");
+
+            List<int> x = new List<int>() { 1, 2, 3 };
+            List<int> y = new List<int>() { 1, 3, 2 };
+            Console.WriteLine($"{x.SequenceEqual(y)}");
         }
     }
 }
