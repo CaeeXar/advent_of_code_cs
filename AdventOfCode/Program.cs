@@ -9,6 +9,7 @@ using AOC2017.Day07;
 using AOC2017.Day08;
 using AOC2017.Day09;
 using AOC2017.Day10;
+using AOC2017.Day11;
 
 // 2024
 using AOC2024.Day01;
@@ -55,9 +56,13 @@ namespace AOC
             //System.Console.WriteLine($"Day09:\n\t- Part 1: {day09.Part1()}\n");
             //System.Console.WriteLine($"\t- Part 2: {day09.Part2()}");
 
-            Day10 day10 = new Day10();
-            System.Console.WriteLine($"Day10:\n\t- Part 1: {day10.Part1()}\n");
-            System.Console.WriteLine($"\t- Part 2: {day10.Part2()}");
+            //Day10 day10 = new Day10();
+            //System.Console.WriteLine($"Day10:\n\t- Part 1: {day10.Part1()}\n");
+            //System.Console.WriteLine($"\t- Part 2: {day10.Part2()}");
+
+            Day11 day11 = new Day11();
+            System.Console.WriteLine($"Day11:\n\t- Part 1: {day11.Part1()}\n");
+            System.Console.WriteLine($"\t- Part 2: {day11.Part2()}");
         }
     }
 }
