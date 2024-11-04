@@ -1,9 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
 namespace AOC2017.Day13
 {
     internal class Day13
-    {
+    {        private struct Sensor
+        {
+            public Sensor(int depth, int range) : this()
+            {
+                this.Depth = depth;
+                this.Range = range;
+            }
+
+            public int Depth { get; set; }
+            public int Range { get; set; }
+        }
+
         string path = @"2017\day13\Input.txt";
 
         public string ReadFile()
@@ -22,31 +35,37 @@ namespace AOC2017.Day13
         public int Part1()
         {
             List<Sensor> sensors = GetSensors(ReadFile());
-            int max = sensors.MaxBy(d => d.Depth)!.Depth;
-            int player = -1,
-                severity = 0;
-            for (int i = 0; i <= max; i++)
-            {
-                // move player
-                player++;
-
-                // check caugth
-                Sensor? sensor = sensors.FirstOrDefault(d => d.Depth == player);
-                if (sensor != null && sensor.Position == 0)
-                {
-                    severity += (sensor.Depth * sensor.Range);
-                }
-
-                // move sensors
-                MoveAllSensors(sensors);
-            }
-
-            return severity;
+            return GetSeverity(sensors);
         }
 
         public int Part2()
         {
-            return 0;
+            List<Sensor> sensors = GetSensors(ReadFile());
+            return FindDelay(sensors);
+        }
+
+        private int FindDelay(List<Sensor> sensors)
+        {
+            int delay = 1;
+            while(sensors.Any(s => Caught(s.Depth, s.Range, delay)))
+            {
+                delay++;
+            }
+
+            return delay;
+        }
+
+        private int GetSeverity(List<Sensor> sensors)
+        {
+            return sensors.Aggregate(
+                0, 
+                (severity, sensor) => 
+                    severity + (Caught(sensor.Depth, sensor.Range) ? sensor.Depth * sensor.Range : 0)
+            );
+        }
+        private bool Caught(int depth, int range, int delay = 0)
+        {
+            return (depth + delay) % (2 * range - 2) == 0;
         }
 
         private List<Sensor> GetSensors(string input)
@@ -59,14 +78,6 @@ namespace AOC2017.Day13
             }
 
             return sensors;
-        }
-
-        private void MoveAllSensors(List<Sensor> sensors)
-        {
-            foreach (Sensor sensor in sensors)
-            {
-                sensor.Move();
-            }
         }
     }
 }

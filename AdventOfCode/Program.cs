@@ -74,5 +74,6 @@ namespace AOC
             System.Console.WriteLine($"Day13:\n\t- Part 1: {day13.Part1()}\n");
             System.Console.WriteLine($"\t- Part 2: {day13.Part2()}");
         }
+
     }
 }
