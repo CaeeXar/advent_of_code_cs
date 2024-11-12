@@ -16,6 +16,7 @@ using AOC2017.Day14;
 
 // 2024
 using AOC2024.Day01;
+using System.Text;
 
 namespace AOC
 {
@@ -79,6 +80,5 @@ namespace AOC
             System.Console.WriteLine($"Day14:\n\t- Part 1: {day14.Part1()}\n");
             System.Console.WriteLine($"\t- Part 2: {day14.Part2()}");
         }
-
     }
 }
