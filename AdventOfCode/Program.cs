@@ -13,7 +13,8 @@ using AOC2017.Day11;
 using AOC2017.Day12;
 using AOC2017.Day13;
 using AOC2017.Day14;
-using AOC2017.Day15_1;
+using AOC2017.Day15;
+using AOC2017.Day16;
 
 // 2024
 using AOC2024.Day01;
@@ -25,9 +26,9 @@ namespace AOC
     {
         static void Main(string[] args)
         {
-            //Day01 day01 = new Day01();
-            //System.Console.WriteLine($"Day01:\n\t- Part 1: {day01.Part1()}\n");
-            //System.Console.WriteLine($"\t- Part 2: {day01.Part2()}");
+            //Day01 day = new Day01();
+            //System.Console.WriteLine($"\n\t- Part 1: {day.Part1()}\n");
+            //System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
 
             //Day02 day02 = new Day02();
             //System.Console.WriteLine($"Day02:\n\t- Part 1: {day02.Part1()}\n");
@@ -81,9 +82,13 @@ namespace AOC
             //System.Console.WriteLine($"Day14:\n\t- Part 1: {day14.Part1()}\n");
             //System.Console.WriteLine($"\t- Part 2: {day14.Part2()}");
 
-            Day15 day15 = new Day15();
-            System.Console.WriteLine($"Day15:\n\t- Part 1: {day15.Part1()}\n");
-            System.Console.WriteLine($"\t- Part 2: {day15.Part2()}");
+            //Day15 day15 = new Day15();
+            //System.Console.WriteLine($"Day15:\n\t- Part 1: {day15.Part1()}\n");
+            //System.Console.WriteLine($"\t- Part 2: {day15.Part2()}");
+
+            Day16 day = new Day16();
+            System.Console.WriteLine($"\t- Part 1: {day.Part1()}\n");
+            System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
         }
     }
 }

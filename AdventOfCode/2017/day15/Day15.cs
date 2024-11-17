@@ -1,9 +1,9 @@
-﻿namespace AOC2017.Day15_1
+﻿namespace AOC2017.Day15
 {
     internal class Day15
     {      
 
-        string path = @"2017\day15_1\Input.txt";
+        string path = @"2017\day15\Input.txt";
 
         public string ReadFile()
         {
