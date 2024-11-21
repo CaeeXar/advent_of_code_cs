@@ -4,7 +4,7 @@ namespace AOC2017.Day18
 {
     internal class Instruction
     {
-        public static Instruction Parse(string line, Dictionary<string, int> registers)
+        public static Instruction Parse(string line, Dictionary<string, long> registers)
         {
             Instruction i = new Instruction();
             string[] data = line.Split(" ", StringSplitOptions.RemoveEmptyEntries)
@@ -12,20 +12,35 @@ namespace AOC2017.Day18
 
             if (data.Length == 3)
             {
-                i.Register = data[1].ToLower();
-                if (int.TryParse(data[2], out _))
+                
+                if (long.TryParse(data[1], out _))
                 {
-                    i.Value = int.Parse(data[2]);
+                    i.ValueX = long.Parse(data[1]);
                 }
                 else 
                 {
-                    i.Value = registers.GetValueOrDefault(data[2].ToLower(), 0);
+                    i.Register = data[1].ToLower();
+                }
+
+                if (long.TryParse(data[2], out _))
+                {
+                    i.ValueY = long.Parse(data[2]);
+                }
+                else
+                {
+                    i.ValueY = registers.GetValueOrDefault(data[2].ToLower(), 0);
                 }
             }
             else
             {
-                i.Register = data[1].ToLower();
-                i.Value = null;
+                if (long.TryParse(data[1], out _))
+                {
+                    i.ValueX = long.Parse(data[1]);
+                }
+                else
+                {
+                    i.Register = data[1].ToLower();
+                }
             }
 
             InstructionType _type;
@@ -50,11 +65,13 @@ namespace AOC2017.Day18
 
         public string Register { get; set; } = string.Empty;
 
-        public int? Value { get; set; } = null;
+        public long ValueY { get; set; }
+
+        public long? ValueX { get; set; } = null;
 
         public override string ToString()
         {
-            return $"{this.Type.ToString()}: (Register: {this.Register}, Value: {this.Value})";
+            return $"{this.Type.ToString()}: (Register: {this.Register}, ValueX: {this.ValueX}, ValueY: {this.ValueY})";
         }
     }
 }
