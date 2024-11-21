@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
 
 namespace AOC2017.Day18
 {
@@ -22,43 +23,53 @@ namespace AOC2017.Day18
 
         public int Part1()
         {
+            // 862 is WRONG
             string[] lines = ReadFile().Split("\n").Select(d => d.Trim().ToLower()).ToArray();
-            Dictionary<string, int> registers = new Dictionary<string, int>();
-            int lastPlayed = 0;
-            for (int i = 0; i < lines.Length; i++)
+            Dictionary<string, int> registers = CreateRegisters();
+            int lastPlayed = 0, i = 0;
+            while (true)
             {
-                Instruction instruction = Instruction.Parse(lines[i]);
-                try 
+                Instruction instruction = Instruction.Parse(lines[i], registers);
+                Console.WriteLine(i + ": " + instruction);
+                try
                 {
                     switch (instruction.Type)
                     {
                         case Instruction.InstructionType.SND:
-                            lastPlayed = PlaySound(instruction, registers);
+                            lastPlayed = PlaySound(instruction, ref registers);
                             break;
                         case Instruction.InstructionType.SET:
-                            Set(instruction, registers);
+                            Set(instruction, ref registers);
                             break;
                         case Instruction.InstructionType.ADD:
-                            Add(instruction, registers);
+                            Add(instruction, ref registers);
                             break;
                         case Instruction.InstructionType.MUL:
-                            Multiply(instruction, registers);
+                            Multiply(instruction, ref registers);
                             break;
                         case Instruction.InstructionType.MOD:
-                            ReduceModulo(instruction, registers);
+                            ReduceModulo(instruction, ref registers);
                             break;
                         case Instruction.InstructionType.RCV:
-                            Recover(instruction, lastPlayed);
+                            int? recovered = Recover(instruction, registers, lastPlayed);
+                            if (recovered != null) return (int)recovered;
                             break;
                         case Instruction.InstructionType.JGZ:
-                            i += Jump(instruction, registers);
+                            int? jump = Jump(instruction, ref registers);
+                            if (jump != null)
+                            {
+                                i += (int)jump;
+                                continue;
+                            }
                             break;
                     }
-                } 
+                }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
+
+                i++;
             }
 
             return 0;
@@ -69,126 +80,65 @@ namespace AOC2017.Day18
             return 0;
         }
 
-        private int PlaySound(Instruction i, Dictionary<string, int> registers)
+        private Dictionary<string, int> CreateRegisters()
         {
-            if (i.RegsiterX == string.Empty && i.ValueX == null) 
-            { 
-                throw new Exception("X: Register and value not defined"); 
+            Dictionary<string, int> registers = new Dictionary<string, int>();
+            for (char c = 'a'; c <= 'z'; c++)
+            {
+                registers.Add(c.ToString(), 0);
             }
 
-            return registers[i.RegsiterX];
+            return registers;
         }
 
-        private void Set(Instruction i, Dictionary<string, int> registers)
+        private int PlaySound(Instruction i, ref Dictionary<string, int> registers)
         {
-            if (i.RegsiterX == string.Empty) throw new Exception("X: Register not defined");
-            if (i.ValueY == null) throw new Exception("Y: Value not defined");
-
-            if (registers.ContainsKey(i.RegsiterX))
-            {
-                registers[i.RegsiterX] = (int)i.ValueY;
-            }
-            else
-            {
-                registers.Add(i.RegsiterX, (int)i.ValueY);
-            }
+            return registers[i.Register];
         }
 
-        private void Add(Instruction i, Dictionary<string, int> registers)
+        private void Set(Instruction i, ref Dictionary<string, int> registers)
         {
-            if (i.RegsiterX == string.Empty)
-            {
-                throw new Exception("X: Register to update is not defined");
-            }
-
-            if (i.RegsiterY == string.Empty && i.ValueY == null)
-            {
-                throw new Exception("Y: Register and value to add are not defined");
-            }
-
-            if (i.RegsiterY != string.Empty)
-            {
-                registers[i.RegsiterX] += registers.GetValueOrDefault(i.RegsiterY, 0);
-            }
-            else if (i.ValueY != null)
-            {
-                registers[i.RegsiterX] += (int)i.ValueY;
-            }
+            if (i.Value == null) throw new Exception("Wrong instruction (SET)!");
+            registers[i.Register] = (int)i.Value;
         }
 
-        private void Multiply(Instruction i, Dictionary<string, int> registers)
+        private void Add(Instruction i, ref Dictionary<string, int> registers)
         {
-            if (i.RegsiterX == string.Empty)
-            {
-                throw new Exception("X: Register to update is not defined");
-            }
-
-            if (i.RegsiterY == string.Empty && i.ValueY == null)
-            {
-                throw new Exception("Y: Register and value to multiply are not defined");
-            }
-
-            if (i.RegsiterY != string.Empty)
-            {
-                registers[i.RegsiterX] *= registers.GetValueOrDefault(i.RegsiterY, 0);
-            }
-            else if (i.ValueY != null)
-            {
-                registers[i.RegsiterX] *= (int)i.ValueY;
-            }
+            if (i.Value == null) throw new Exception("Wrong instruction (ADD)!");
+            registers[i.Register] += (int)i.Value;
         }
 
-        private void ReduceModulo(Instruction i, Dictionary<string, int> registers)
+        private void Multiply(Instruction i, ref Dictionary<string, int> registers)
         {
-            if (i.RegsiterX == string.Empty)
-            {
-                throw new Exception("X: Register to update is not defined");
-            }
-
-            if (i.RegsiterY == string.Empty && i.ValueY == null)
-            {
-                throw new Exception("Y: Register and value to reduce to modulo are not defined");
-            }
-
-            if (i.RegsiterY != string.Empty)
-            {
-                registers[i.RegsiterX] %= registers.GetValueOrDefault(i.RegsiterY, 0);
-            }
-            else if (i.ValueY != null)
-            {
-                registers[i.RegsiterX] %= (int)i.ValueY;
-            }
+            if (i.Value == null) throw new Exception("Wrong instruction (MUL)!");
+            registers[i.Register] *= (int)i.Value;
         }
 
-        private int Recover(Instruction i, int lastPlayed)
+        private void ReduceModulo(Instruction i, ref Dictionary<string, int> registers)
         {
-            if (i.RegsiterX == string.Empty && i.ValueX == null)
-            {
-                throw new Exception("X: Register and value are not defined");
-            }
-
-            if (lastPlayed != 0) return lastPlayed;
-            return 0;
+            if (i.Value == null) throw new Exception("Wrong instruction (MOD)!");
+            registers[i.Register] %= (int)i.Value;
         }
 
-        private int Jump(Instruction i, Dictionary<string, int> registers)
+        private int? Recover(Instruction i, Dictionary<string, int> registers, int lastPlayed)
         {
-            if (i.RegsiterX == string.Empty && i.ValueX == null)
+            if (registers[i.Register] != 0)
             {
-                throw new Exception("X: Register and value are not defined");
+                return lastPlayed;
             }
 
-            if (i.RegsiterX == string.Empty && i.ValueY == null)
+            return null;
+        }
+
+        private int? Jump(Instruction i, ref Dictionary<string, int> registers)
+        {
+            if (i.Value == null) throw new Exception("Wrong instruction (JGZ)!");
+            if (registers[i.Register] > 0)
             {
-                throw new Exception("Y: Yalue are not defined");
+                return i.Value;
             }
 
-            if (registers.GetValueOrDefault(i.RegsiterX, 0) > 0)
-            {
-                return registers.GetValueOrDefault(i.RegsiterY, (int)i.ValueY);
-            }
-
-            return 0;
+            return null;
         }
     }
 }

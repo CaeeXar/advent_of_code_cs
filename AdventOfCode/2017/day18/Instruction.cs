@@ -1,37 +1,36 @@
-﻿namespace AOC2017.Day18
+﻿using System.Runtime.CompilerServices;
+
+namespace AOC2017.Day18
 {
     internal class Instruction
     {
-        public static Instruction Parse(string line)
+        public static Instruction Parse(string line, Dictionary<string, int> registers)
         {
             Instruction i = new Instruction();
-            string[] data = line.Split(" ").Select(d => d.Trim()).ToArray();
-            string type = data[0];
-            string x = data[1];
+            string[] data = line.Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                                .Select(d => d.Trim()).ToArray();
 
-            if (int.TryParse(x, out _))
+            if (data.Length == 3)
             {
-                i.ValueX = int.Parse(x);
+                i.Register = data[1].ToLower();
+                if (int.TryParse(data[2], out _))
+                {
+                    i.Value = int.Parse(data[2]);
+                }
+                else 
+                {
+                    i.Value = registers.GetValueOrDefault(data[2].ToLower(), 0);
+                }
             }
             else
             {
-                i.RegsiterX = x;
+                i.Register = data[1].ToLower();
+                i.Value = null;
             }
 
-            if (data.Length > 2)
-            {
-                string y = data[2];
-                if (int.TryParse(y, out _))
-                {
-                    i.ValueY = int.Parse(y);
-                }
-                else
-                {
-                    i.RegsiterY = y;
-                }
-            }
-
-            Enum.Parse(typeof(InstructionType), type, true);
+            InstructionType _type;
+            Enum.TryParse<InstructionType>(data[0], true, out _type);
+            i.Type = _type;
 
             return i;
         }
@@ -49,12 +48,13 @@
 
         public InstructionType Type { get; set; }
 
-        public string RegsiterX { get; set; } = string.Empty;
+        public string Register { get; set; } = string.Empty;
 
-        public string RegsiterY { get; set; } = string.Empty;
+        public int? Value { get; set; } = null;
 
-        public int? ValueX { get; set; } = null;
-
-        public int? ValueY { get; set; } = null;
+        public override string ToString()
+        {
+            return $"{this.Type.ToString()}: (Register: {this.Register}, Value: {this.Value})";
+        }
     }
 }
