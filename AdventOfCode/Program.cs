@@ -20,6 +20,7 @@ using AOC2017.Day18;
 
 // 2024
 using AOC2024.Day01;
+using AOC2024.Day02;
 
 namespace AOC
 {
@@ -100,7 +101,12 @@ namespace AOC
             //System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
 
             // 2024
-            AOC2024.Day01.Day01 day = new AOC2024.Day01.Day01();
+
+            //AOC2024.Day01.Day01 day = new AOC2024.Day01.Day01();
+            //System.Console.WriteLine($"\t- Part 1: {day.Part1()}\n");
+            //System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
+
+            AOC2024.Day02.Day02 day = new AOC2024.Day02.Day02();
             System.Console.WriteLine($"\t- Part 1: {day.Part1()}\n");
             System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
         }
