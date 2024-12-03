@@ -1,4 +1,6 @@
-﻿namespace AOC2024.Day01
+﻿using System.Collections.Immutable;
+
+namespace AOC2024.Day01
 {
     internal class Day01
     {
@@ -20,12 +22,50 @@
 
         public int Part1() 
         {
-            return 0;
+            List<int> left = new List<int>();
+            List<int> right = new List<int>();
+
+            foreach(string line in ReadFile().Split("\n"))
+            {
+                int[] numbers = line.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(d => int.Parse(d.Trim())).ToArray();
+                left.Add(numbers[0]);
+                right.Add(numbers[1]);
+            }
+
+            left.Sort();
+            right.Sort();
+
+            int sum = 0;
+            for (int i = 0; i < left.Count; i++)
+            {
+                sum += Math.Abs(left[i] - right[i]);
+            }
+
+            return sum;
         }
 
         public int Part2()
         {
-            return 0;
+            List<int> left = new List<int>();
+            List<int> right = new List<int>();
+
+            foreach (string line in ReadFile().Split("\n"))
+            {
+                int[] numbers = line.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(d => int.Parse(d.Trim())).ToArray();
+                left.Add(numbers[0]);
+                right.Add(numbers[1]);
+            }
+
+            left.Sort();
+            right.Sort();
+
+            int sum = 0;
+            for (int i = 0; i < left.Count; i++)
+            {
+                sum += left[i] * right.Count(d => d == left[i]);
+            }
+
+            return sum;
         }
     }
 }

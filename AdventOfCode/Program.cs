@@ -95,7 +95,12 @@ namespace AOC
             //System.Console.WriteLine($"\t- Part 1: {day.Part1()}\n");
             //System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
 
-            Day18 day = new Day18();
+            //Day18 day = new Day18();
+            //System.Console.WriteLine($"\t- Part 1: {day.Part1()}\n");
+            //System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
+
+            // 2024
+            AOC2024.Day01.Day01 day = new AOC2024.Day01.Day01();
             System.Console.WriteLine($"\t- Part 1: {day.Part1()}\n");
             System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
         }
