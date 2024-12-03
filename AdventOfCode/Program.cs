@@ -17,6 +17,7 @@ using AOC2017.Day15;
 using AOC2017.Day16;
 using AOC2017.Day17;
 using AOC2017.Day18;
+using AOC2017.Day19;
 
 // 2024
 using AOC2024.Day01;

@@ -1,7 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography.X509Certificates;
-
-namespace AOC2017.Day18
+﻿namespace AOC2017.Day18
 {
     internal class Day18
     {      
@@ -21,45 +18,45 @@ namespace AOC2017.Day18
             }
         }
 
-        public int Part1()
+        public long Part1()
         {
-            // 862 is WRONG
             string[] lines = ReadFile().Split("\n").Select(d => d.Trim().ToLower()).ToArray();
-            Dictionary<string, int> registers = CreateRegisters();
-            int lastPlayed = 0, i = 0;
+            Dictionary<string, long> registers = CreateRegisters();
+            long lastPlayed = 0, i = 0;
             while (true)
             {
-                Instruction instruction = Instruction.Parse(lines[i], registers);
-                Console.WriteLine(i + ": " + instruction);
+                if (i >= lines.Length) return 0;
+
+                Instruction instruction0 = Instruction.Parse(lines[i], registers);
                 try
                 {
-                    switch (instruction.Type)
+                    switch (instruction0.Type)
                     {
                         case Instruction.InstructionType.SND:
-                            lastPlayed = PlaySound(instruction, ref registers);
+                            lastPlayed = PlaySound(instruction0, ref registers);
                             break;
                         case Instruction.InstructionType.SET:
-                            Set(instruction, ref registers);
+                            Set(instruction0, ref registers);
                             break;
                         case Instruction.InstructionType.ADD:
-                            Add(instruction, ref registers);
+                            Add(instruction0, ref registers);
                             break;
                         case Instruction.InstructionType.MUL:
-                            Multiply(instruction, ref registers);
+                            Multiply(instruction0, ref registers);
                             break;
                         case Instruction.InstructionType.MOD:
-                            ReduceModulo(instruction, ref registers);
+                            ReduceModulo(instruction0, ref registers);
                             break;
                         case Instruction.InstructionType.RCV:
-                            int? recovered = Recover(instruction, registers, lastPlayed);
-                            if (recovered != null) return (int)recovered;
+                            long? recovered = Recover(instruction0, registers, lastPlayed);
+                            if (recovered != null) return (long)recovered;
                             break;
                         case Instruction.InstructionType.JGZ:
-                            int? jump = Jump(instruction, ref registers);
+                            long? jump = Jump(instruction0, ref registers);
                             if (jump != null)
                             {
-                                i += (int)jump;
-                                continue;
+                                i += (long)jump;
+                                i--;
                             }
                             break;
                     }
@@ -71,57 +68,161 @@ namespace AOC2017.Day18
 
                 i++;
             }
-
-            return 0;
         }
 
-        public int Part2()
+        public long Part2()
         {
-            return 0;
+            Dictionary<string, long> register0 = CreateRegisters();
+            Dictionary<string, long> register1 = CreateRegisters('p', 1);
+            Queue<long> values0 = new Queue<long>();
+            Queue<long> values1 = new Queue<long>();
+            string[] lines = ReadFile().Split("\n").Select(d => d.Trim().ToLower()).ToArray();
+            long i0 = 0, i1 = 0, times = 0;
+            bool waiting0 = false, waiting1 = false;
+            while (true)
+            {
+                if (i0 >= lines.Length || i1 >= lines.Length) return times;
+
+                Instruction instruction0 = Instruction.Parse(lines[i0], register0);
+                Instruction instruction1 = Instruction.Parse(lines[i1], register1);
+                
+                if (waiting0 && waiting1) return times;
+
+                if (!waiting0 || values0.Count != 0)
+                {
+                    switch (instruction0.Type)
+                    {
+                        case Instruction.InstructionType.SND:
+                            Send(instruction0, register0, ref values1);
+                            break;
+                        case Instruction.InstructionType.SET:
+                            Set(instruction0, ref register0);
+                            break;
+                        case Instruction.InstructionType.ADD:
+                            Add(instruction0, ref register0);
+                            break;
+                        case Instruction.InstructionType.MUL:
+                            Multiply(instruction0, ref register0);
+                            break;
+                        case Instruction.InstructionType.MOD:
+                            ReduceModulo(instruction0, ref register0);
+                            break;
+                        case Instruction.InstructionType.RCV:
+                            waiting0 = !Receive(instruction0, register0, ref values0);
+                            if (waiting0) i0--;
+                            break;
+                        case Instruction.InstructionType.JGZ:
+                            long? jump = Jump(instruction0, ref register0);
+                            if (jump != null)
+                            {
+                                i0 += (long)jump;
+                                i0--;
+                            }
+                            break;
+                    }
+
+                    i0++;
+                }
+
+                if (!waiting1 || values1.Count != 0)
+                {
+                    switch (instruction1.Type)
+                    {
+                        case Instruction.InstructionType.SND:
+                            Send(instruction1, register1, ref values0);
+                            times++;
+                            break;
+                        case Instruction.InstructionType.SET:
+                            Set(instruction1, ref register1);
+                            break;
+                        case Instruction.InstructionType.ADD:
+                            Add(instruction1, ref register1);
+                            break;
+                        case Instruction.InstructionType.MUL:
+                            Multiply(instruction1, ref register1);
+                            break;
+                        case Instruction.InstructionType.MOD:
+                            ReduceModulo(instruction1, ref register1);
+                            break;
+                        case Instruction.InstructionType.RCV:
+                            waiting1 = !Receive(instruction1, register1, ref values1);
+                            if (waiting1) i1--;
+                            break;
+                        case Instruction.InstructionType.JGZ:
+                            long? jump = Jump(instruction1, ref register1);
+                            if (jump != null)
+                            {
+                                i1 += (long)jump;
+                                i1--;
+                            }
+                            break;
+                    }
+
+                    i1++;
+                }
+            }
         }
 
-        private Dictionary<string, int> CreateRegisters()
+        private Dictionary<string, long> CreateRegisters(char defaultRegister = 'p', int defaultValue = 0)
         {
-            Dictionary<string, int> registers = new Dictionary<string, int>();
+            Dictionary<string, long> registers = new Dictionary<string, long>();
             for (char c = 'a'; c <= 'z'; c++)
             {
-                registers.Add(c.ToString(), 0);
+                if (c == defaultRegister) registers.Add(c.ToString(), defaultValue);
+                else registers.Add(c.ToString(), 0);
             }
 
             return registers;
         }
 
-        private int PlaySound(Instruction i, ref Dictionary<string, int> registers)
+        private bool Receive(Instruction i, Dictionary<string, long> register, ref Queue<long> queue)
         {
+            if (queue.Count == 0) return false;
+            long value = queue.Dequeue();
+            register[i.Register] = value;
+            return true;
+        }
+
+        private void Send(Instruction i, Dictionary<string, long> register, ref Queue<long> queue)
+        {
+            if (i.ValueX != null && i.Register == string.Empty) queue.Enqueue((long)i.ValueX);
+            else if (i.ValueX == null && i.Register != string.Empty) queue.Enqueue(register[i.Register]);
+
+        }
+
+        private long PlaySound(Instruction i, ref Dictionary<string, long> registers)
+        {
+            if (!registers.ContainsKey(i.Register)) throw new Exception($"Error with {i}");
             return registers[i.Register];
         }
 
-        private void Set(Instruction i, ref Dictionary<string, int> registers)
+        private void Set(Instruction i, ref Dictionary<string, long> registers)
         {
-            if (i.Value == null) throw new Exception("Wrong instruction (SET)!");
-            registers[i.Register] = (int)i.Value;
+            if (!registers.ContainsKey(i.Register)) throw new Exception($"Error with {i}");
+            registers[i.Register] = i.ValueY;
         }
 
-        private void Add(Instruction i, ref Dictionary<string, int> registers)
+        private void Add(Instruction i, ref Dictionary<string, long> registers)
         {
-            if (i.Value == null) throw new Exception("Wrong instruction (ADD)!");
-            registers[i.Register] += (int)i.Value;
+            if (!registers.ContainsKey(i.Register)) throw new Exception($"Error with {i}");
+            registers[i.Register] += i.ValueY;
         }
 
-        private void Multiply(Instruction i, ref Dictionary<string, int> registers)
+        private void Multiply(Instruction i, ref Dictionary<string, long> registers)
         {
-            if (i.Value == null) throw new Exception("Wrong instruction (MUL)!");
-            registers[i.Register] *= (int)i.Value;
+            if (!registers.ContainsKey(i.Register)) throw new Exception($"Error with {i}");
+            registers[i.Register] *= i.ValueY;
         }
 
-        private void ReduceModulo(Instruction i, ref Dictionary<string, int> registers)
+        private void ReduceModulo(Instruction i, ref Dictionary<string, long> registers)
         {
-            if (i.Value == null) throw new Exception("Wrong instruction (MOD)!");
-            registers[i.Register] %= (int)i.Value;
+            if (!registers.ContainsKey(i.Register)) throw new Exception($"Error with {i}");
+            registers[i.Register] %= i.ValueY;
         }
 
-        private int? Recover(Instruction i, Dictionary<string, int> registers, int lastPlayed)
+        private long? Recover(Instruction i, Dictionary<string, long> registers, long lastPlayed)
         {
+            if (!registers.ContainsKey(i.Register)) throw new Exception($"Error with {i}");
             if (registers[i.Register] != 0)
             {
                 return lastPlayed;
@@ -130,12 +231,16 @@ namespace AOC2017.Day18
             return null;
         }
 
-        private int? Jump(Instruction i, ref Dictionary<string, int> registers)
+        private long? Jump(Instruction i, ref Dictionary<string, long> registers)
         {
-            if (i.Value == null) throw new Exception("Wrong instruction (JGZ)!");
-            if (registers[i.Register] > 0)
+            if (i.ValueX != null && i.Register == string.Empty && i.ValueX > 0)
             {
-                return i.Value;
+                return i.ValueY;
+            }
+
+            if (i.ValueX == null && i.Register != string.Empty && registers[i.Register] > 0)
+            {
+                return i.ValueY;
             }
 
             return null;
