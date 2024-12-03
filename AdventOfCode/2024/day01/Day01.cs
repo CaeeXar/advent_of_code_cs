@@ -4,7 +4,6 @@ namespace AOC2024.Day01
 {
     internal class Day01
     {
-        private int total { get; set; }
         string path = @"2024\day01\Input.txt";
 
         public string ReadFile()

@@ -2,7 +2,6 @@
 {
     internal class Day02
     {
-        private int total { get; set; }
         string path = @"2024\day02\Input.txt";
 
         public string ReadFile()
