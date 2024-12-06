@@ -22,8 +22,8 @@ using AOC2017.Day19;
 // 2024
 using AOC2024.Day01;
 using AOC2024.Day02;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
+using AOC2024.Day03;
+using AOC2024.Day04;
 
 namespace AOC
 {
@@ -37,9 +37,9 @@ namespace AOC
             //System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
 
             // 2024
-            AOC2024.Day03.Day03 day = new AOC2024.Day03.Day03();
-            System.Console.WriteLine($"\t- Part 1: {day.Part1()}\n");
-            System.Console.WriteLine($"\t- Part 2: {day.Part2()}");           
+            AOC2024.Day04.Day04 day = new AOC2024.Day04.Day04();
+            //System.Console.WriteLine($"\t- Part 1: {day.Part1()}\n");
+            System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
         }
     }
 }
