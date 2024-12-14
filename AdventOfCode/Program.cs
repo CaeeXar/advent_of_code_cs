@@ -1,6 +1,5 @@
 ﻿namespace AOC
 {
-    using Point = (int x, int y);
     internal class Program
     {
         static void Main(string[] args)
@@ -11,7 +10,7 @@
             //System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
 
             // 2024
-            AOC2024.Day08.Day08 day = new AOC2024.Day08.Day08();
+            AOC2024.Day09.Day09 day = new AOC2024.Day09.Day09();
             System.Console.WriteLine($"\t- Part 1: {day.Part1()}\n");
             System.Console.WriteLine($"\t- Part 2: {day.Part2()}");
         }
