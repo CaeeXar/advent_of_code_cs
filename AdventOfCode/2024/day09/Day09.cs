@@ -27,6 +27,8 @@
             for (int i = 0; i < diskMap.Length; i++)
             {
                 int blockSize = int.Parse(diskMap[i].ToString());
+                if (blockSize == 0) continue;
+
                 if (i % 2 == 0)
                 {
                     cleanedDiskMap.AddRange(Enumerable.Repeat(currentId++, blockSize));
