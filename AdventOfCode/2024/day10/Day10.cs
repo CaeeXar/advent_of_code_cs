@@ -41,7 +41,54 @@
 
         public int Part2()
         {
-            return 0;
+            int[][] map = ReadFile().Split(new string[] { "\r\n", "\n", "\r" }, StringSplitOptions.None)
+                                     .Select(d => d.Trim()
+                                                   .ToCharArray()
+                                                   .Select(n => n == '.' ? -1 : int.Parse(n.ToString()))
+                                                   .ToArray())
+                                     .ToArray();
+            Stack<Point> trailheads = FindTrailheads(map);
+            int total = 0;
+            while (trailheads.Count > 0)
+            {
+                Point trailhead = trailheads.Pop();
+                total += CaluclateTrailheadScoreMultiple(trailhead, map);
+            }
+
+            return total;
+        }
+
+        private int CaluclateTrailheadScoreMultiple(Point trailhead, int[][] map)
+        {
+            Queue<Point> queue = new Queue<Point>();
+            queue.Enqueue(trailhead);
+            HashSet<Point> visited = new HashSet<Point>();
+            int[] dx = { 1, -1, 0, 0 };
+            int[] dy = { 0, 0, 1, -1 };
+            int total = 0;
+
+            while (queue.Count > 0)
+            {
+                Point current = queue.Dequeue();
+                if (map[current.y][current.x] == 9)
+                {
+                    total++;
+                    visited.Add(new Point(current.x, current.y));
+                }
+
+                for (int i = 0; i < 4; i++)
+                {
+                    int x = current.x + dx[i], y = current.y + dy[i];
+                    Point next = new Point(x, y);
+                    if (WithinBoundary(next, map) &&
+                        (map[current.y][current.x] + 1) == map[next.y][next.x])
+                    {
+                        queue.Enqueue(next);
+                    }
+
+                }
+            }
+            return total;
         }
 
         private int CaluclateTrailheadScore(Point trailhead, int[][] map)
