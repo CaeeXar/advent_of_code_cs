@@ -1,7 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System.Runtime.CompilerServices;
-
-namespace AOC2024.Day11
+﻿namespace AOC2024.Day11
 {
     internal class Day11
     {
