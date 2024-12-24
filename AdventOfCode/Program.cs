@@ -10,7 +10,7 @@
             //Console.WriteLine($"\t- Part 2: {day.Part2()}");
 
             // 2024
-            AOC2024.Day12.Day12 day = new AOC2024.Day12.Day12();
+            AOC2024.Day13.Day13 day = new AOC2024.Day13.Day13();
             Console.WriteLine($"\t- Part 1: {day.Part1()}\n");
             Console.WriteLine($"\t- Part 2: {day.Part2()}");
         }
