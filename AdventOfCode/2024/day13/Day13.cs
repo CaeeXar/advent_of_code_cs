@@ -1,4 +1,6 @@
-﻿namespace AOC2024.Day13
+﻿using System.Numerics;
+
+namespace AOC2024.Day13
 {
     internal class Day13
     {
@@ -6,20 +8,25 @@
 
         private struct Equation
         {
-            public Equation(int a, int b, int c)
+            public Equation(long a, long b, long c)
             {
                 this.A = a;
                 this.B = b;
                 this.C = c;
             }
 
-            public int A { get; private set; }
-            public int B { get; private set; }
-            public int C { get; private set; }
+            public long A { get; private set; }
+            public long B { get; private set; }
+            public long C { get; private set; }
 
-            public bool Valid(int x, int y)
+            public bool Valid(long x, long y)
             {
-                return this.A * x + this.B * y == this.C;
+                return this.A * x + this.B * y == (this.C);
+            }
+
+            public bool Valid(long x, long y, long offset)
+            {
+                return this.A * x + this.B * y == (this.C + offset);
             }
         }
 
@@ -36,29 +43,29 @@
             }
         }
 
-        public int Part1()
+        public long Part1()
         {
             List<Tuple<Equation, Equation>> equations;
             ParseInput(out equations);
 
-            int total = 0;
+            long total = 0;
             foreach (Tuple<Equation,Equation> machine in equations)
             {
                 Equation e1 = machine.Item1, e2 = machine.Item2;
-                List<Tuple<int, int>> solutions = new List<Tuple<int, int>>();
-                int max = Math.Max(e1.C, e2.C);
-                for (int x = 1; e1.A * x < max; x++)
+                List<Tuple<long, long>> solutions = new List<Tuple<long, long>>();
+                long max = Math.Max(e1.C, e2.C);
+                for (long x = 1; e1.A * x < max; x++)
                 {
-                    for (int y = 1; e2.B * y < max; y++)
+                    for (long y = 1; e1.B * y < max; y++)
                     {
-                        if (e1.A * x + e1.B * y == e1.C && e2.A * x + e2.B * y == e2.C)
+                        if (e1.Valid(x, y) && e2.Valid(x, y))
                         {
-                            solutions.Add(new Tuple<int, int>(x, y));
+                            solutions.Add(new Tuple<long, long>(x, y));
                         }
                     }
                 }
 
-                Tuple<int, int>? min = solutions.MinBy(p => p.Item1 * 3 + p.Item2);
+                Tuple<long, long>? min = solutions.MinBy(p => p.Item1 * 3 + p.Item2);
                 if (min != null)
                 {
                     total += (min.Item1 * 3 + min.Item2);
@@ -70,7 +77,29 @@
 
         public long Part2()
         {
-            return 0;
+            // 94x + 22y = 8400
+            // 34x + 67y = 5400 ==> y = 5400/67 - 34x/67
+            // e1.A * x + e1.B * y = e1.C
+            // e2.A * x + e2.B * y = e2.C ==> y = (e2.C / e2.B) - (e2.A * x / e2.B)
+            // Substitution:
+            // https://www.varsitytutors.com/hotmath/hotmath_help/topics/solving-systems-of-linear-equations-using-substitution
+            List<Tuple<Equation, Equation>> equations;
+            ParseInput(out equations);
+
+            long offset = (long)10e12, total = 0;
+            foreach (Tuple<Equation, Equation> machine in equations)
+            {
+                Equation e1 = machine.Item1, e2 = machine.Item2;
+                long x = (e2.B * (e1.C + offset) - e1.B * (e2.C + offset)) / (e2.B * e1.A - e1.B * e2.A);
+                long y = ((e2.C + offset) / e2.B) - (e2.A * x) / e2.B;
+
+                if (e1.Valid(x, y, offset) && e1.Valid(x, y, offset))
+                {
+                    total += (x * 3 + y);
+                }
+            }
+
+            return total;
         }
 
         private void ParseInput(out List<Tuple<Equation, Equation>> equations)
