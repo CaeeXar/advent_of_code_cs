@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection.Emit;
-
-namespace AOC2025.Day01;
+﻿namespace AOC2025.Day01;
 
 internal class Day01
 {
