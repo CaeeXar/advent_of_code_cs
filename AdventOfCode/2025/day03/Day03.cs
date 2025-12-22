@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Text;
-
-namespace AOC2025.Day03;
+﻿namespace AOC2025.Day03;
 
 internal class Day03
 {
@@ -22,36 +19,15 @@ internal class Day03
 
     public long Part1()
     {
-        var lines = ReadFile().Split("\r\n", StringSplitOptions.TrimEntries);
-        long sum = 0;
-        foreach (var line in lines)
-        {
-            int firstIndex = 0, firstDigit = 0, secondDigit = 0;
-            for (int i = 0; i < line.Length - 1; i++)
-            {
-                var digit = line[i] - '0';
-                if (digit > firstDigit)
-                {
-                    (firstDigit, firstIndex) = (digit, i);
-                }
-            }
-
-            for (int i = firstIndex + 1; i < line.Length; i++)
-            {
-                var digit = line[i] - '0';
-                if (digit > secondDigit)
-                {
-                    secondDigit = digit;
-                }
-            }
-
-            sum += (firstDigit * 10 + secondDigit);
-        }
-        
-        return sum;
+        return this.Solve(batteries: 2);
     }
 
     public long Part2()
+    {
+        return this.Solve(batteries: 12);
+    }
+
+    private long Solve(int batteries)
     {
         var lines = ReadFile().Split("\r\n", StringSplitOptions.TrimEntries);
         long sum = 0;
@@ -60,13 +36,13 @@ internal class Day03
         {
             var digits = line.Select(d => d - '0');
             int from = 0;
-            for (int offset = 11; offset >= 0; offset--)
+            for (int exp = batteries - 1; exp >= 0; exp--)
             {
-                int to = line.Length - offset;
+                int to = line.Length - exp;
                 var (digit, index) = this.Max(digits, from, to);
 
                 from = index + 1;
-                sum += digit * ((long)Math.Pow(10, offset));
+                sum += digit * ((long)Math.Pow(10, exp));
             }
 
         }
